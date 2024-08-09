@@ -73,7 +73,7 @@ const getSingleBook = async (req, res) => {
 	try {
 		const getSinglebook = await Book_Schema.findOne({
 			_id: id,
-			userId: userId,
+			userId: userId
 		});
 
 		if (getSinglebook) {

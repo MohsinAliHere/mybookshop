@@ -4,6 +4,7 @@ const Connect_Db = require("./database");
 const app = express();
 const PORT = process.env.PORT || 3000;
 const AuthRoutes = require("./routes/Auth");
+const BookRoutes = require("./routes/books");
 
 Connect_Db();
 
@@ -42,5 +43,6 @@ app.get("/", (req, res) => {
 });
 
 app.use(AuthRoutes);
+app.use(BookRoutes);
 
 app.listen(PORT, () => console.log("Running on server " + PORT));

@@ -1,105 +1,83 @@
-const Book_Schema = require("../../models/Books");
+const Book = require("../../models/Books");
 
-const getAllBooks = async (req, res) => {
+exports.getAllBooks = async (req, res) => {
 	try {
-		const getAllbooks = await Book_Schema.find({});
-		if (getAllbooks) {
-			return res.json({
-				success: true,
-				message: "get All Books successfully",
-				data: getAllbooks,
-			});
-		}
+		const books = await Book.find();
+		return res.status(200).json({
+			success: true,
+			data: books,
+			message: "All book fetch successfully",
+		});
 	} catch (error) {
-		return res.json({
+		res.status(500).json({
 			success: false,
 			message: error.message,
 		});
 	}
 };
-const postBook = async (req, res) => {
-	try {
-		console.log(req);
-		const { title, content } = req.body;
-		if (!title || !content) {
-			return res.json({
-				success: false,
-				message: "All field are required !",
-			});
-		}
 
-		const create_book = await Book_Schema.create({
+exports.postBook = async (req, res) => {
+	try {
+		const { title, content } = req.body;
+		const { userId } = req;
+		const newBook = new Book({
 			title,
 			content,
-			user_id: req.userId,
+			userId,
 		});
-
-		if (create_book) {
-			return res.json({
-				success: true,
-				message: "Book create successfully",
-				data: create_book,
-			});
-		}
+		await newBook.save();
+		return res.status(200).json({
+			success: true,
+			data: newBook,
+			message: "new book successfully",
+		});
 	} catch (error) {
-		return res.json({
-			success: false,
-			message: error.message,
-		});
+		res.status(500).json({ error: error.message });
 	}
 };
-const deleteAllBooks = async (req, res) => {
-	try {
-		const removeAllbooks = await Book_Schema.deleteMany({});
-		if (removeAllbooks) {
-			return res.json({
-				success: true,
-				message: "Remove All Books successfully",
-				data: create_book,
-			});
-		}
-	} catch (error) {
-		return res.json({
-			success: false,
-			message: error.message,
-		});
-	}
-};
-const deleteBook = (req, res) => {};
-const getSingleBook = async (req, res) => {
-	const { userId } = req;
-	const { id } = req.params;
 
+exports.getSingleBook = async (req, res) => {
 	try {
-		const getSinglebook = await Book_Schema.findOne({
-			_id: id,
-			userId: userId
-		});
-
-		if (getSinglebook) {
-			return res.json({
-				success: true,
-				message: "Get single book successfully",
-				data: getSinglebook,
-			});
-		} else {
+		const book = await Book.findById(req.params.id);
+		if (!book)
 			return res.status(404).json({
 				success: false,
 				message: "Book not found",
 			});
-		}
-	} catch (error) {
-		return res.status(500).json({
-			success: false,
-			message: error.message,
+		return res.status(200).json({
+			success: true,
+			data: book,
+			message: "book fetch successfully",
 		});
+	} catch (error) {
+		res.status(500).json({ error: error.message });
 	}
 };
 
-module.exports = {
-	getAllBooks,
-	postBook,
-	deleteAllBooks,
-	deleteBook,
-	getSingleBook,
+exports.deleteBook = async (req, res) => {
+	try {
+		const result = await Book.findByIdAndDelete(req.params.id);
+		if (!result)
+			return res.status(404).json({
+				success: false,
+				message: "Book not found",
+			});
+		res
+			.status(200)
+			.json({ message: "Book deleted successfully", success: true });
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
+};
+
+exports.deleteAllBooks = async (req, res) => {
+	try {
+		await Book.deleteMany();
+		res.status(200).json({
+			success: true,
+			message: "All books deleted successfully",
+		});
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
 };

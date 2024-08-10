@@ -12,7 +12,7 @@ const BookSchema = new Schema(
 			type: String,
 			required: true,
 		},
-		user_id: {
+		userId: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "User",
 			required: true,

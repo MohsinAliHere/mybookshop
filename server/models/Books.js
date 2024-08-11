@@ -12,6 +12,10 @@ const BookSchema = new Schema(
 			type: String,
 			required: true,
 		},
+		bookUrl: {
+			type: String,
+			require: true,
+		},
 		userId: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "User",

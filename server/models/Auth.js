@@ -14,6 +14,14 @@ const User_Schema = new Schema({
 		type: String,
 		required: true,
 	},
+	otp: {
+		type: String,
+		required: false,
+	},
+	otpExpires: {
+		type: Date,
+		required: false,
+	},
 });
 
 const UserModel = mongoose.model("User", User_Schema);
